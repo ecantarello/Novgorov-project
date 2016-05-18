@@ -40,16 +40,16 @@ for (j in 1:length(File_names)){
 }
 
 #now create summary of these results so they can be plotted
-bins<-c(10,3000)
+bins<-c(10,500)
 head(Cell_stats)
-Cell_stats$bin_cut<-cut(Cell_stats$value,bins,include.lowest=T,labels =c(3000))
+Cell_stats$bin_cut<-cut(Cell_stats$value,bins,include.lowest=T,labels =c(500))
 Cell_stats<-subset(Cell_stats,!is.na(bin_cut))
-Cell_stats2<-ddply(Cell_stats2,.(species,age,scenario),summarise,Av=mean(Total),std.dev=sd(Total))
-write.csv(Cell_stats3, file="summary_species.csv")
+Cell_stats2<-ddply(Cell_stats,.(species,age,scenario),summarise,Total=sum(count))
+write.csv(Cell_stats2, file="summary_species.csv")
 
 #now plot results
 theme_set(theme_bw(base_size=12))
-P1<-ggplot(Cell_stats2,aes(x=age,y=((Av)/56656)*100,ymax=((Av)/56656)*100,ymin=((Av)/56656)*100,T,colour=scenario))+geom_line(alpha=0.8)+facet_wrap(~species)+scale_colour_brewer("Scenarios",palette="Set1")
+P1<-ggplot(Cell_stats2,aes(x=age,y=((Total)/56656)*100,ymax=((Total)/56656)*100,ymin=((Total)/56656)*100,T,colour=scenario))+geom_line(alpha=0.8)+facet_wrap(~species)+scale_colour_brewer("Scenarios",palette="Set1")
 P2<-P1+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.border = element_rect(size=1.5,colour="black",fill=NA))
 P2+ylab("Percentage cover")+xlab("Year")+scale_y_continuous(labels = comma)
 ggsave("Figures/Species_cover_10yrs.pdf",height=6,width=10,units="in",dpi=400)
@@ -59,7 +59,7 @@ pdf("Figures/Species_cover_10_2.pdf")
 un_scen<-unique(Cell_stats2$scenario)
 for (i in 1:length(un_scen)){
   cell_sub<-subset(Cell_stats2,scenario==un_scen[i])
-  P1<-ggplot(cell_sub,aes(x=age,y=((Av)/56656)*100,ymax=((Av)/56656)*100,ymin=((Av)/56656)*100,T))+geom_line(alpha=0.8)+facet_wrap(~species)
+  P1<-ggplot(cell_sub,aes(x=age,y=((Total)/56656)*100,ymax=((Total)/56656)*100,ymin=((Total)/56656)*100,T))+geom_line(alpha=0.8)+facet_wrap(~species)
   P2<-P1+theme(panel.grid.major = element_blank(),panel.grid.minor = element_blank(),panel.border = element_rect(size=1.5,colour="black",fill=NA))
   P3<-P2+ylab("Percentage cover")+xlab("Year")+scale_y_continuous(labels = comma)+ggtitle(un_scen[i])
   print(P3)
