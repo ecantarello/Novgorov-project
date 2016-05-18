@@ -36,7 +36,7 @@ for (j in 1:length(File_names)){
   Cell_freq$species<-sub(".*?/(.*?)-MAX.*", "\\1", File_names[j])#get species name
   Cell_stats<-rbind(Cell_freq,Cell_stats)#bind all together into one table
   n<-n+1#output the percentage of the task that is done
-  print((n/length(File_names))*100)
+  print(paste(round((n/length(File_names))*100),2),"percent finished")
 }
 
 #now create summary of these results so they can be plotted
@@ -44,8 +44,14 @@ bins<-c(10,500)
 head(Cell_stats)
 Cell_stats$bin_cut<-cut(Cell_stats$value,bins,include.lowest=T,labels =c(500))
 Cell_stats<-subset(Cell_stats,!is.na(bin_cut))
+<<<<<<< HEAD
 Cell_stats2<-ddply(Cell_stats,.(species,age,scenario),summarise,Total=sum(count))
 write.csv(Cell_stats2, file="summary_species.csv")
+=======
+head(Cell_stats)
+Cell_stats2<-ddply(Cell_stats,.(species,age,scenario),summarise,Av=mean(count),std.dev=sd(count))
+write.csv(Cell_stats3, file="summary_species.csv")
+>>>>>>> 676e0d7304316e834caa45696265b72128e3f663
 
 #now plot results
 theme_set(theme_bw(base_size=12))
